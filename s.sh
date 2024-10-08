@@ -1,4 +1,4 @@
-20mkdir -p .devcontainer
+mkdir -p .devcontainer
 cat <<EOL > .devcontainer/devcontainer.json
 {
     "name": "My Codespace",
