@@ -4,14 +4,16 @@ cat <<EOL > .devcontainer/devcontainer.json
     "name": "My Codespace",
     "customizations": {
         "vscode": {
-            "settings": {},
-            "extensions": []
+            "settings": {
+            },
+            "extensions": [
+        
+            ]
         }
     },
-    "postCreateCommand": "pip install flask requests && chmod +x * && python3 child.py",
-    "forwardPorts": [5000]
+    "onCreateCommand": "pip install flask requests",
+    "postCreateCommand": "python3 child.py"
 }
-
 EOL
 
 git add .devcontainer/devcontainer.json

